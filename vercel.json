@@ -4,10 +4,6 @@
     {
       "source": "/countries",
       "destination": "src/index.js"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/$1"
     }
   ]
 }
