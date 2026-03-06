@@ -7,5 +7,6 @@ app.use("/countries", countriesRouter);
 app.use(express.static("public"));
 app.use("/src", express.static("src"));
 
-export default app
-
+export default function handler(req, res) {
+  app(req, res);
+}
