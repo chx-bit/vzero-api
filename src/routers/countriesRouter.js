@@ -1,41 +1,104 @@
+import { Router } from "express";
 import countries from "../api/countries.js";
-import express from "express";
+import { errorResponse } from "../utils/handlers.js";
 
-const countriesRouter = express.Router();
+const countriesRouter = Router();
 
+const stripGov = country => {
+    const { government, ...rest } = country;
+    return rest;
+};
+
+// GET /countries
 countriesRouter.get("/", (req, res) => {
-    const { name, capital, region, language, currency } = req.query;
+    const { name, capital, region, language, currency, government, govType } =
+        req.query;
 
-    let data;
+    if (
+        !name &&
+        !capital &&
+        !region &&
+        !language &&
+        !currency &&
+        !government &&
+        !govType
+    ) {
+        return res.json(countries.map(stripGov));
+    }
+
+    if (
+        government === "true" &&
+        !name &&
+        !capital &&
+        !region &&
+        !language &&
+        !currency &&
+        !govType
+    ) {
+        return res.json(countries);
+    }
+
+    let result = [...countries];
+
     if (name) {
-        data = countries.filter(c =>
+        result = result.filter(c =>
             c.name.toLowerCase().includes(name.toLowerCase())
         );
-    } else {
-        data = countries.map(({ government, ...rest }) => rest);
     }
-    
-    if (capital)
-        data = data.filter(c =>
-            c.capital.toLowerCase().includes(capital.toLowerCase())
-        );
-    if (region)
-        data = data.filter(c =>
-            c.region.toLowerCase().includes(region.toLowerCase())
-        );
-    if (language)
-        data = data.filter(c =>
-            c.language.toLowerCase().includes(language.toLowerCase())
-        );
-    if (currency)
-        data = data.filter(c =>
-            c.currency.toLowerCase().includes(currency.toLowerCase())
-        );
 
-    if (!data || data.length === 0)
-        return res.status(404).json({ error: "Country may not found" });
+    if (capital) {
+        result = result.filter(c =>
+            c.capital?.toLowerCase().includes(capital.toLowerCase())
+        );
+    }
 
-    res.json(data);
+    if (region) {
+        result = result.filter(c =>
+            c.region?.toLowerCase().includes(region.toLowerCase())
+        );
+    }
+
+    if (language) {
+        result = result.filter(c =>
+            c.languages?.some(l =>
+                l.toLowerCase().includes(language.toLowerCase())
+            )
+        );
+    }
+
+    if (currency) {
+        result = result.filter(c =>
+            c.currencies?.some(cur =>
+                cur.toLowerCase().includes(currency.toLowerCase())
+            )
+        );
+    }
+
+    if (govType) {
+        result = result.filter(c =>
+            c.government?.type?.toLowerCase().includes(govType.toLowerCase())
+        );
+    }
+
+    if (result.length === 0) {
+        errorResponse(res, 400, "Country may not found");
+    }
+
+    const withGov = name || govType;
+    return res.json(withGov ? result : result.map(stripGov));
 });
 
-export { countriesRouter };
+// GET /countries/:code
+countriesRouter.get("/:code", (req, res) => {
+    const country = countries.find(
+        c => c.iso2.toLowerCase() === req.params.code.toLowerCase()
+    );
+
+    if (!country) {
+      errorResponse(res, 400, "Country may not found");
+    }
+
+    return res.json(country);
+});
+
+export default countriesRouter;
