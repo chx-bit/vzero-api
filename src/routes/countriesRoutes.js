@@ -101,9 +101,4 @@ routes.get("/:code", (req, res) => {
     return res.json(country);
 });
 
-// GET /ping
-routes.get("/ping", (req, res) => {
-    res.json({ status: "OK" });
-});
-
 export { routes as countriesRoutes };
