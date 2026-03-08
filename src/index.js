@@ -2,6 +2,7 @@ import { countriesRoutes } from "./routes/countriesRoutes.js";
 import express from "express";
 import { fileURLToPath } from "url";
 import path from "path";
+import {compression} from 'compression'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,6 +10,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const isProd = process.env.NODE_ENV === "production";
 
+app.use(compression())
 app.use("/countries", countriesRoutes);
 app.use(express.static(path.join(__dirname, "../public")));
 
