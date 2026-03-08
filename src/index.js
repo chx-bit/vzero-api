@@ -13,8 +13,27 @@ app.use("/countries", countriesRoutes);
 app.use(express.static(path.join(__dirname, "../public")));
 
 // GET /ping
-app.get("/ping", (req, res) => {
-    res.json({ status: "OK" });
+app.get("/ping", async (req, res) => {
+  const start = Date.now();
+
+  // ukur response time /countries
+  const countriesStart = Date.now();
+  await import("./api/countries.js");
+  const countriesTime = Date.now() - countriesStart;
+
+  res.json({
+    status: "OK",
+    uptime: process.uptime().toFixed(2) + "s",
+    response_time: {
+      ping: Date.now() - start + "ms",
+      countries: countriesTime + "ms"
+    },
+    memory: {
+      used: (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2) + "MB",
+      total: (process.memoryUsage().heapTotal / 1024 / 1024).toFixed(2) + "MB"
+    },
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.get("/", (req, res) => {
