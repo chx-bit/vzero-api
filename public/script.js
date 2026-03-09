@@ -45,6 +45,7 @@ const ENDPOINTS = [
     tr.addEventListener('click', () => fillPlayground(ep.path));
     tbody.appendChild(tr);
   });
+  setTimeout(() => AOS.refreshHard(), 100);
 })();
 
 function fillPlayground(path) {
