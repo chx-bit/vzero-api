@@ -7,6 +7,13 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+            integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+        <link
             href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Barlow:wght@400;500&display=swap"
             rel="stylesheet"
         />
@@ -15,6 +22,7 @@
             rel="stylesheet"
         />
         <link rel="stylesheet" href="style.css" />
+        <script src="./scripts/vmarquee.js"></script>
     </head>
     <body>
         <div id="cursor"></div>
@@ -40,7 +48,7 @@
 
         <section id="hero">
             <div class="section">
-                <div data-aos="fade-up" data-aos-duration="500">
+                <div data-aos="fade-up" data-aos-duration="1000">
                     <span class="hero-tag"
                         >REST API · Open Source · Free Forever</span
                     >
@@ -49,8 +57,8 @@
                 <h1
                     class="hero-title"
                     data-aos="fade-up"
-                    data-aos-delay="80"
-                    data-aos-duration="600"
+                    data-aos-delay="100"
+                    data-aos-duration="1000"
                 >
                     No Login.<br />
                     No Key.<br />
@@ -59,9 +67,9 @@
 
                 <p
                     class="hero-desc"
-                    data-aos="fade-up"
-                    data-aos-delay="160"
-                    data-aos-duration="600"
+                    data-aos="fade-up-right"
+                    data-aos-delay="200"
+                    data-aos-duration="1000"
                 >
                     Comprehensive country data for 200+ nations. Zero auth, zero
                     friction. Built for developers who just want to ship.
@@ -70,12 +78,12 @@
                 <div
                     class="hero-cta"
                     data-aos="fade-up"
-                    data-aos-delay="240"
-                    data-aos-duration="600"
+                    data-aos-delay="300"
+                    data-aos-duration="1000"
                 >
                     <a href="#playground" class="btn-neo-red"
-                        >Try Playground →</a
-                    >
+                        >Try Playground <i class="fas fa-arrow-right"></i
+                    ></a>
                     <a href="#endpoints" class="btn-neo-white"
                         >View Endpoints</a
                     >
@@ -85,7 +93,7 @@
                     class="base-url-bar"
                     data-aos="fade-up"
                     data-aos-delay="320"
-                    data-aos-duration="600"
+                    data-aos-duration="1000"
                 >
                     <span class="badge-get">BASE URL</span>
                     <span class="url">https://countriesapi-v0.vercel.app</span>
@@ -98,15 +106,86 @@
                         copy
                     </button>
                 </div>
+                <div
+                    class="xmarquee"
+                    data-direction="left"
+                    data-speed="20000"
+                    data-gap="40"
+                >
+                    <div class="marquee-img-wrap">
+                        <img
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg"
+                            alt="Node.js"
+                        />
+
+                        <!-- Express -->
+                        <img
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg"
+                            alt="Express"
+                            class="img-invert"
+                        />
+
+                        <!-- JavaScript -->
+                        <img
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg"
+                            alt="JavaScript"
+                        />
+
+                        <!-- Vercel -->
+                        <img
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg"
+                            alt="Vercel"
+                            class="img-invert"
+                        />
+
+                        <!-- Git -->
+                        <img
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg"
+                            alt="Git"
+                        />
+
+                        <!-- GitHub -->
+                        <img
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+                            alt="GitHub"
+                            class="img-invert"
+                        />
+
+                        <!-- VS Code -->
+                        <img
+                            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg"
+                            alt="VS Code"
+                        />
+                    </div>
+                </div>
             </div>
         </section>
-
+        <div class="marquee-wrap">
+            <div
+                class="vmarquee"
+                data-direction="left"
+                data-speed="8000"
+                data-gap="48"
+                data-pause-on-hover="true"
+            >
+                FREE API · NO AUTH · 200+ COUNTRIES · OPEN SOURCE ·
+            </div>
+            <div
+                class="vmarquee"
+                data-direction="right"
+                data-gap="48"
+                data-speed="10000"
+                data-rotate="0"
+            >
+                FREE API · NO AUTH · 200+ COUNTRIES · OPEN SOURCE ·
+            </div>
+        </div>
         <section id="stats">
             <div class="section">
                 <div class="stats-grid">
                     <div
                         class="stat-card"
-                        data-aos="fade-up"
+                        data-aos="fade-up-right"
                         data-aos-delay="0"
                     >
                         <div class="stat-num" style="color: var(--red)">
@@ -116,15 +195,17 @@
                     </div>
                     <div
                         class="stat-card"
-                        data-aos="fade-up"
+                        data-aos="fade-up-left"
                         data-aos-delay="60"
                     >
-                        <div class="stat-num">∞</div>
+                        <div class="stat-num">
+                            <i class="fas fa-infinity"></i>
+                        </div>
                         <div class="stat-label">Requests</div>
                     </div>
                     <div
                         class="stat-card"
-                        data-aos="fade-up"
+                        data-aos="fade-up-right"
                         data-aos-delay="120"
                     >
                         <div class="stat-num">0</div>
@@ -132,7 +213,7 @@
                     </div>
                     <div
                         class="stat-card"
-                        data-aos="fade-up"
+                        data-aos="fade-up-left"
                         data-aos-delay="180"
                     >
                         <div class="stat-num">87%</div>
@@ -141,7 +222,34 @@
                 </div>
             </div>
         </section>
-
+        <div class="cmarquee" data-speed="120000">
+            Afghanistan · Albania · Algeria · Andorra · Angola · Argentina ·
+            Armenia · Australia · Austria · Azerbaijan · Bahamas · Bahrain ·
+            Bangladesh · Belarus · Belgium · Belize · Benin · Bhutan · Bolivia ·
+            Bosnia · Botswana · Brazil · Brunei · Bulgaria · Burkina Faso ·
+            Burundi · Cambodia · Cameroon · Canada · Chad · Chile · China ·
+            Colombia · Comoros · Congo · Croatia · Cuba · Cyprus · Czech
+            Republic · Denmark · Djibouti · Dominican Republic · Ecuador · Egypt
+            · El Salvador · Estonia · Ethiopia · Fiji · Finland · France · Gabon
+            · Gambia · Georgia · Germany · Ghana · Greece · Guatemala · Guinea ·
+            Haiti · Honduras · Hungary · Iceland · India · Indonesia · Iran ·
+            Iraq · Ireland · Israel · Italy · Jamaica · Japan · Jordan ·
+            Kazakhstan · Kenya · Kuwait · Kyrgyzstan · Laos · Latvia · Lebanon ·
+            Lesotho · Liberia · Libya · Liechtenstein · Lithuania · Luxembourg ·
+            Madagascar · Malawi · Malaysia · Maldives · Mali · Malta ·
+            Mauritania · Mauritius · Mexico · Moldova · Monaco · Mongolia ·
+            Montenegro · Morocco · Mozambique · Myanmar · Namibia · Nepal ·
+            Netherlands · New Zealand · Nicaragua · Niger · Nigeria · North
+            Korea · Norway · Oman · Pakistan · Panama · Paraguay · Peru ·
+            Philippines · Poland · Portugal · Qatar · Romania · Russia · Rwanda
+            · Saudi Arabia · Senegal · Serbia · Sierra Leone · Singapore ·
+            Slovakia · Slovenia · Somalia · South Africa · South Korea · Spain ·
+            Sri Lanka · Sudan · Sweden · Switzerland · Syria · Taiwan ·
+            Tajikistan · Tanzania · Thailand · Togo · Trinidad · Tunisia ·
+            Turkey · Turkmenistan · Uganda · Ukraine · United Arab Emirates ·
+            United Kingdom · United States · Uruguay · Uzbekistan · Venezuela ·
+            Vietnam · Yemen · Zambia · Zimbabwe ·
+        </div>
         <section id="endpoints">
             <div class="section">
                 <div class="section-header" data-aos="fade-up">
@@ -283,13 +391,20 @@
             </div>
         </footer>
 
+        <script>
+            window.addEventListener("load", () => {
+                vMarquee.init(".xmarquee");
+                vMarquee.init(".cmarquee");
+                vMarquee.init(".vmarquee");
+            });
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
         <script>
             AOS.init({
-                duration: 650,
-                once: true,
+                duration: 1000,
+                once: false,
                 easing: "ease-out-cubic",
-                offset: 60
+                offset: 0
             });
         </script>
         <script src="script.js"></script>
