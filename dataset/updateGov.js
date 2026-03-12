@@ -174,35 +174,62 @@ async function fetchGovernmentData(countryName) {
     }
 }
 
+// batch size — how many countries fetched concurrently per pool
+const BATCH_SIZE = 10;
+// delay between batches in ms — prevents Wikipedia rate limit
+const BATCH_DELAY = 200;
+
 async function main() {
     const updated = [];
     const skipped = [];
+    const start = Date.now();
 
-    for (const country of countries) {
-        console.log(`🌍 Processing: ${country.name}...`);
-
-        const government = await fetchGovernmentData(country.name);
-        await delay(200);
-
-        const allNull =
-            !government || Object.values(government).every(v => v === null);
-
-        if (allNull) {
-            console.log(`⚠️  Skipped: ${country.name} (all null)`);
-            skipped.push(country.name);
-            continue;
-        }
-
-        updated.push({ ...country, government });
-        console.log(`✅ ${country.name} →`, government);
+    // split countries into chunks of BATCH_SIZE
+    const batches = [];
+    for (let i = 0; i < countries.length; i += BATCH_SIZE) {
+        batches.push(countries.slice(i, i + BATCH_SIZE));
     }
 
-    const output = `const countries = ${JSON.stringify(updated, null, 2)};\n\nexport default countries;`;
+    for (const [i, batch] of batches.entries()) {
+        const batchStart = Date.now();
+        console.log(`\n Batch ${i + 1}/${batches.length}`);
+
+        // fetch all countries in batch concurrently
+        const results = await Promise.all(
+            batch.map(async country => {
+                const t = Date.now();
+                const government = await fetchGovernmentData(country.name);
+                console.log(`🌍 ${country.name} — ${Date.now() - t}ms`);
+                return { country, government };
+            })
+        );
+
+        // process results
+        for (const { country, government } of results) {
+            const allNull =
+                !government || Object.values(government).every(v => v === null);
+
+            if (allNull) {
+                console.log(`⚠️  Skipped: ${country.name} (all null)`);
+                skipped.push(country.name);
+                continue;
+            }
+
+            updated.push({ ...country, government });
+            console.log(`✅ ${country.name} →`, government);
+        }
+
+        console.log(`⏱  Batch done — ${Date.now() - batchStart}ms`);
+
+        await delay(BATCH_DELAY);
+    }
+
+    const output = `export const countries = ${JSON.stringify(updated, null, 2)};`;
     fs.writeFileSync("./src/api/v1/countries.js", output, "utf-8");
 
-    console.log("200");
+    console.log(`\n total ${Date.now() - start}ms`);
     if (skipped.length > 0) {
-        console.log(` Skipped: ${skipped.join(", ")}`);
+        console.log(`Skipped: ${skipped.join(", ")}`);
     }
 }
 
