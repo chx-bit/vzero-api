@@ -4,8 +4,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 import compression from "compression";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const currentFile = fileURLToPath(import.meta.url);
+const currentDir = path.dirname(currentFile);
 
 const app = express();
 const isProd = process.env.NODE_ENV === "production";
@@ -17,7 +17,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use("/v1/countries", countriesRoutes);
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(currentDir, "../public")));
 
 // GET /ping
 app.get("/ping", async (req, res) => {
@@ -50,7 +50,7 @@ app.get("/ping", async (req, res) => {
 });
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
+    res.sendFile(path.join(currentDir, "../public/index.html"));
 });
 
 if (!isProd) {
