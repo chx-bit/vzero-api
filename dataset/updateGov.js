@@ -1,5 +1,5 @@
 import fs from "fs";
-import {countries} from "../api/v1/countries.js";
+import { countries } from "../src/api/v1/countries.js";
 const NAME_OVERRIDE = {
     Gambia: "The Gambia",
     Ireland: "Republic of Ireland",
