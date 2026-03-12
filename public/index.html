@@ -22,7 +22,6 @@
             rel="stylesheet"
         />
         <link rel="stylesheet" href="style.css" />
-        <script src="./scripts/vmarquee.js"></script>
     </head>
     <body>
         <div id="cursor"></div>
@@ -47,6 +46,7 @@
         </nav>
 
         <section id="hero">
+            <div class="glow"></div>
             <div class="section">
                 <div data-aos="fade-up" data-aos-duration="1000">
                     <span class="hero-tag"
@@ -160,9 +160,10 @@
                 </div>
             </div>
         </section>
-        <div class="marquee-wrap">
+        <section id="stats">
+            <div class="marquee-wrap"></div>
             <div
-                class="vmarquee"
+                class="xmarquee1"
                 data-direction="left"
                 data-speed="8000"
                 data-gap="48"
@@ -171,7 +172,7 @@
                 FREE API · NO AUTH · 200+ COUNTRIES · OPEN SOURCE ·
             </div>
             <div
-                class="vmarquee"
+                class="xmarquee2"
                 data-direction="right"
                 data-gap="48"
                 data-speed="10000"
@@ -179,8 +180,6 @@
             >
                 FREE API · NO AUTH · 200+ COUNTRIES · OPEN SOURCE ·
             </div>
-        </div>
-        <section id="stats">
             <div class="section">
                 <div class="stats-grid">
                     <div
@@ -222,6 +221,36 @@
                 </div>
             </div>
         </section>
+        <section id="endpoints">
+            <div class="section">
+                <div class="section-header" data-aos="fade-up">
+                    <div class="red-line"></div>
+                    <h2 class="section-title">Endpoints</h2>
+                    <p class="section-sub">
+                        Click any row to prefill the playground.
+                    </p>
+                </div>
+
+                <div
+                    class="ep-table-wrap"
+                    data-aos="fade-up"
+                    data-aos-delay="80"
+                >
+                    <table class="ep-table">
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Path</th>
+                                <th>Description</th>
+                                <th>Gov</th>
+                            </tr>
+                        </thead>
+                        <tbody id="endpoint-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
         <div class="cmarquee" data-speed="120000">
             Afghanistan · Albania · Algeria · Andorra · Angola · Argentina ·
             Armenia · Australia · Austria · Azerbaijan · Bahamas · Bahrain ·
@@ -250,40 +279,9 @@
             United Kingdom · United States · Uruguay · Uzbekistan · Venezuela ·
             Vietnam · Yemen · Zambia · Zimbabwe ·
         </div>
-        <section id="endpoints">
-            <div class="section">
-                <div class="section-header" data-aos="fade-up" data-aos-offset="20">
-                    <div class="red-line"></div>
-                    <h2 class="section-title">Endpoints</h2>
-                    <p class="section-sub">
-                        Click any row to prefill the playground.
-                    </p>
-                </div>
-
-                <div
-                    class="ep-table-wrap"
-                    data-aos="fade-up"
-                    data-aos-delay="80"
-                    data-aos-offset="20"
-                >
-                    <table class="ep-table">
-                        <thead>
-                            <tr>
-                                <th>Method</th>
-                                <th>Path</th>
-                                <th>Description</th>
-                                <th>Gov</th>
-                            </tr>
-                        </thead>
-                        <tbody id="endpoint-list"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
         <section id="playground">
             <div class="section">
-                <div class="section-header" data-aos="fade-up" >
+                <div class="section-header" data-aos="fade-up">
                     <div class="red-line"></div>
                     <h2 class="section-title">Playground</h2>
                     <p class="section-sub">
@@ -343,10 +341,10 @@
                         >
                     </div>
 
-                    <button id="send-btn" class="btn-send">
+                    <a href="#res-wrap" onclick="sendRequest()" id="send-btn" class="btn-send">
                         <span id="btn-label">Send Request</span>
                         <div id="btn-spinner" class="spinner hidden"></div>
-                    </button>
+                    </a>
                 </div>
 
                 <div id="res-wrap" class="res-card hidden" data-aos="fade-up">
@@ -395,17 +393,23 @@
         <script>
             window.addEventListener("load", () => {
                 vMarquee.init(".xmarquee");
+                vMarquee.init(".xmarquee1");
+                vMarquee.init(".xmarquee2");
                 vMarquee.init(".cmarquee");
-                vMarquee.init(".vmarquee");
             });
         </script>
+        <script>
+            history.scrollRestoration = "manual";
+            window.scrollTo(0, 0);
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/chx-bit/vmarquee@main/vmarquee.min.js"></script>
         <script>
             AOS.init({
                 duration: 1000,
                 once: false,
                 easing: "ease-out-cubic",
-                offset: 20
+                offset: 40
             });
         </script>
         <script src="script.js"></script>
