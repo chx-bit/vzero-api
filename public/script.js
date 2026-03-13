@@ -1,35 +1,16 @@
-const BASE = "https://countriesapi-v0.vercel.app";
+const BASE = "https://vzeroapi.vercel.app";
 
 const ENDPOINTS = [
     { path: "/v1/countries", desc: "Fetch all countries", gov: false },
-    {
-        path: "/v1/countries?government=true",
-        desc: "All countries + government data",
-        gov: true
-    },
+    { path: "/v1/countries?government=true", desc: "All countries + government data", gov: true },
     { path: "/v1/countries?name=Indonesia", desc: "Filter by name", gov: true },
-    {
-        path: "/v1/countries?capital=Jakarta",
-        desc: "Filter by capital",
-        gov: false
-    },
+    { path: "/v1/countries?capital=Jakarta", desc: "Filter by capital", gov: false },
     { path: "/v1/countries?region=Asia", desc: "Filter by region", gov: false },
-    {
-        path: "/v1/countries?language=Spanish",
-        desc: "Filter by language",
-        gov: false
-    },
-    {
-        path: "/v1/countries?currency=IDR",
-        desc: "Filter by currency",
-        gov: false
-    },
-    {
-        path: "/v1/countries?govType=republic",
-        desc: "Filter by government type",
-        gov: true
-    },
+    { path: "/v1/countries?language=Spanish", desc: "Filter by language", gov: false },
+    { path: "/v1/countries?currency=IDR", desc: "Filter by currency", gov: false },
+    { path: "/v1/countries?govType=republic", desc: "Filter by government type", gov: true },
     { path: "/v1/countries/ID", desc: "Fetch by ISO2 code", gov: true },
+    { path: "/downloader?url=https://www.tiktok.com/@tiktokofficial/video/732560527&type=tiktok", desc: "Download media via URL", gov: false },
     { path: "/ping", desc: "Health check & metrics", gov: false }
 ];
 
@@ -74,33 +55,54 @@ const ENDPOINTS = [
     setTimeout(() => AOS.refreshHard(), 100);
 })();
 
+function toggleApiMode() {
+    const mode = document.getElementById("api-mode").value;
+    if (mode === "countries") {
+        document.getElementById("countries-inputs").classList.remove("hidden");
+        document.getElementById("downloader-inputs").classList.add("hidden");
+    } else {
+        document.getElementById("countries-inputs").classList.add("hidden");
+        document.getElementById("downloader-inputs").classList.remove("hidden");
+    }
+    updatePreview();
+}
+
 function fillPlayground(path) {
-    document.getElementById("iso-code").value = "";
-    document.getElementById("filter-key").value = "";
-    document.getElementById("filter-value").value = "";
-    setValDisabled(false);
-
     const url = new URL(BASE + path);
-    const params = url.searchParams;
-    const parts = url.pathname.split("/");
-    const last = parts[parts.length - 1];
+    const isDownloader = url.pathname.startsWith('/downloader');
 
-    if (last.length === 2 && last.toUpperCase() !== "V1") {
-        document.getElementById("iso-code").value = last.toUpperCase();
-    } else if (params.toString()) {
-        const key = [...params.keys()][0];
-        document.getElementById("filter-key").value = key;
-        if (key === "government") {
-            setValDisabled(true);
-        } else {
-            document.getElementById("filter-value").value = params.get(key);
+    if (isDownloader) {
+        document.getElementById("api-mode").value = "downloader";
+        toggleApiMode();
+        document.getElementById("dl-url").value = url.searchParams.get("url") || "";
+        document.getElementById("dl-type").value = url.searchParams.get("type") || "tiktok";
+    } else {
+        document.getElementById("api-mode").value = "countries";
+        toggleApiMode();
+        document.getElementById("iso-code").value = "";
+        document.getElementById("filter-key").value = "";
+        document.getElementById("filter-value").value = "";
+        setValDisabled(false);
+
+        const params = url.searchParams;
+        const parts = url.pathname.split("/");
+        const last = parts[parts.length - 1];
+
+        if (last.length === 2 && last.toUpperCase() !== "V1") {
+            document.getElementById("iso-code").value = last.toUpperCase();
+        } else if (params.toString()) {
+            const key = [...params.keys()][0];
+            document.getElementById("filter-key").value = key;
+            if (key === "government") {
+                setValDisabled(true);
+            } else {
+                document.getElementById("filter-value").value = params.get(key);
+            }
         }
     }
 
     updatePreview();
-    document
-        .getElementById("playground")
-        .scrollIntoView({ behavior: "smooth" });
+    document.getElementById("playground").scrollIntoView({ behavior: "smooth" });
 }
 
 function setValDisabled(on) {
@@ -116,14 +118,22 @@ function onFilterChange() {
 }
 
 function buildURL() {
+    const mode = document.getElementById("api-mode").value;
+
+    if (mode === "downloader") {
+        const url = document.getElementById("dl-url").value.trim();
+        const type = document.getElementById("dl-type").value;
+        if (url) return `${BASE}/downloader?url=${encodeURIComponent(url)}&type=${type}`;
+        return `${BASE}/downloader`;
+    }
+
     const iso = document.getElementById("iso-code").value.trim();
     const key = document.getElementById("filter-key").value;
     const val = document.getElementById("filter-value").value.trim();
 
     if (iso) return `${BASE}/v1/countries/${iso}`;
     if (key === "government") return `${BASE}/v1/countries?government=true`;
-    if (key && val)
-        return `${BASE}/v1/countries?${key}=${encodeURIComponent(val)}`;
+    if (key && val) return `${BASE}/v1/countries?${key}=${encodeURIComponent(val)}`;
     return `${BASE}/v1/countries`;
 }
 
@@ -135,99 +145,108 @@ async function sendRequest() {
     setLoading(true);
     document.getElementById("res-wrap").classList.remove("hidden");
     const t = Date.now();
+    const mode = document.getElementById("api-mode").value;
+    const reqUrl = buildURL();
+
     try {
-        const res = await fetch(buildURL());
+        const res = await fetch(reqUrl);
         const ms = Date.now() - t;
-        const data = await res.json();
-        showResponse(res.status, ms, data);
+
+        if (mode === "downloader") {
+            if (res.ok) {
+                const blob = await res.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                const contentDisposition = res.headers.get('Content-Disposition');
+                let filename = "downloaded_media.mp4";
+                
+                if (contentDisposition && contentDisposition.includes('filename=')) {
+                    filename = contentDisposition.split('filename=')[1].replace(/"/g, '');
+                }
+                
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(downloadUrl);
+                
+                showResponse(res.status, ms, { success: true, message: "Download triggered via browser." });
+            } else {
+                const data = await res.json().catch(() => ({ errors: "Download request failed" }));
+                showError(data.errors || "Download request failed");
+            }
+        } else {
+            const data = await res.json();
+            showResponse(res.status, ms, data);
+        }
     } catch (e) {
         showError(e.message);
     } finally {
         setLoading(false);
-    document.getElementById("res-wrap").scrollIntoView()
+        document.getElementById("res-wrap").scrollIntoView();
     }
 }
 
 function setLoading(on) {
     document.getElementById("send-btn").disabled = on;
     document.getElementById("btn-spinner").classList.toggle("hidden", !on);
-    document.getElementById("btn-label").textContent = on
-        ? "Sending..."
-        : "Send Request";
+    document.getElementById("btn-label").textContent = on ? "Sending..." : "Send Request";
 }
 
 function showResponse(status, ms, data) {
     document.getElementById("res-wrap").classList.remove("hidden");
-
     const el = document.getElementById("res-status");
     el.textContent = `${status} ${status === 200 ? "OK" : "ERROR"}`;
     el.className = "res-status " + (status === 200 ? "ok" : "err");
-
     document.getElementById("res-time").textContent = `${ms}ms`;
-
-    const count =
-        data?.logs?.count ??
-        (Array.isArray(data?.data) ? data.data.length : null);
-    document.getElementById("res-count").textContent =
-        count != null ? `${count} records` : "";
-
-    document.getElementById("res-pre").innerHTML = syntaxHighlight(
-        JSON.stringify(data, null, 2)
-    );
+    
+    const count = data?.logs?.count ?? (Array.isArray(data?.data) ? data.data.length : null);
+    document.getElementById("res-count").textContent = count != null ? `${count} records` : "";
+    
+    document.getElementById("res-pre").innerHTML = syntaxHighlight(JSON.stringify(data, null, 2));
 }
 
 function showError(msg) {
     document.getElementById("res-wrap").classList.remove("hidden");
-
     const el = document.getElementById("res-status");
     el.textContent = "ERROR";
     el.className = "res-status err";
-
     document.getElementById("res-time").textContent = "";
     document.getElementById("res-count").textContent = "";
     document.getElementById("res-pre").textContent = msg;
 }
 
 function syntaxHighlight(json) {
-    return json.replace(
-        /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
-        m => {
-            let c = "jn";
-            if (/^"/.test(m)) c = /:$/.test(m) ? "jk" : "js";
-            else if (/true|false/.test(m)) c = "jb";
-            else if (/null/.test(m)) c = "jnu";
-            return `<span class="${c}">${m}</span>`;
-        }
-    );
+    return json.replace(/("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+        let c = "jn";
+        if (/^"/.test(m)) c = /:$/.test(m) ? "jk" : "js";
+        else if (/true|false/.test(m)) c = "jb";
+        else if (/null/.test(m)) c = "jnu";
+        return `<span class="${c}">${m}</span>`;
+    });
 }
 
 function copyText(text, btn) {
     navigator.clipboard.writeText(text).then(() => {
         const orig = btn.textContent;
         btn.textContent = "copied!";
-        setTimeout(() => {
-            btn.textContent = orig;
-        }, 1500);
+        setTimeout(() => { btn.textContent = orig; }, 1500);
     });
 }
 
 function copyResponse(btn) {
-    navigator.clipboard
-        .writeText(document.getElementById("res-pre").textContent)
-        .then(() => {
-            btn.textContent = "copied!";
-            setTimeout(() => {
-                btn.textContent = "copy";
-            }, 1500);
-        });
+    navigator.clipboard.writeText(document.getElementById("res-pre").textContent).then(() => {
+        btn.textContent = "copied!";
+        setTimeout(() => { btn.textContent = "copy"; }, 1500);
+    });
 }
 
-document
-    .getElementById("filter-key")
-    .addEventListener("change", onFilterChange);
-document
-    .getElementById("filter-value")
-    .addEventListener("input", updatePreview);
+document.getElementById("api-mode").addEventListener("change", toggleApiMode);
+document.getElementById("filter-key").addEventListener("change", onFilterChange);
+document.getElementById("filter-value").addEventListener("input", updatePreview);
+document.getElementById("dl-url").addEventListener("input", updatePreview);
+document.getElementById("dl-type").addEventListener("change", updatePreview);
 document.getElementById("iso-code").addEventListener("input", function () {
     this.value = this.value.toUpperCase();
     updatePreview();
