@@ -24,7 +24,6 @@ To get this project up and running on your local machine, follow these steps:
    git clone [https://github.com/chx-bit/vzero-api.git](https://github.com/chx-bit/vzero-api.git)
    cd vzero-api
 
-```
 
 2. **Install dependencies**
 Make sure you have [Node.js](https://nodejs.org/) installed, then run:
